@@ -1,0 +1,83 @@
+import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+);
+
+const renderer = new THREE.WebGLRenderer({
+canvas:document.getElementById("game")
+});
+
+renderer.setSize(
+window.innerWidth,
+window.innerHeight
+);
+
+const light = new THREE.DirectionalLight(
+0xffffff,
+2
+);
+
+light.position.set(10,20,10);
+scene.add(light);
+
+const road = new THREE.Mesh(
+new THREE.BoxGeometry(20,1,200),
+new THREE.MeshStandardMaterial({
+color:0x333333
+})
+);
+
+scene.add(road);
+
+const car = new THREE.Mesh(
+new THREE.BoxGeometry(2,1,4),
+new THREE.MeshStandardMaterial({
+color:0xff0000
+})
+);
+
+car.position.y=1;
+scene.add(car);
+
+camera.position.set(0,5,-10);
+
+let left=false;
+let right=false;
+
+document.addEventListener("keydown",e=>{
+if(e.key==="ArrowLeft") left=true;
+if(e.key==="ArrowRight") right=true;
+});
+
+document.addEventListener("keyup",e=>{
+if(e.key==="ArrowLeft") left=false;
+if(e.key==="ArrowRight") right=false;
+});
+
+let score=0;
+
+function animate(){
+
+requestAnimationFrame(animate);
+
+if(left) car.position.x-=0.15;
+if(right) car.position.x+=0.15;
+
+score++;
+
+document.getElementById("score").innerText=
+Math.floor(score/10);
+
+camera.position.x=car.position.x;
+camera.lookAt(car.position);
+
+renderer.render(scene,camera);
+}
+
+animate();
